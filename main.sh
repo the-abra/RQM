@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Sources
-source .shrc/*
-source /usr/share/RQM/system.cfg
+source .shsrc/*
+source system.cfg
 
 cd $workpath
 
