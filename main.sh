@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Sources
-source .shsrc/*
+source .shsrc/logging.lib
 source system.cfg
 
 cd $workpath
