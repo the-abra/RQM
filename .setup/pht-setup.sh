@@ -1,7 +1,7 @@
 #!/bin/bash
 
 apt update
-apt install net-tools curl build-essential -yq
+apt install net-tools curl build-essential qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager -yq
 
 # Check if Rust is already installed
 if command -v rustc > /dev/null 2>&1; then
