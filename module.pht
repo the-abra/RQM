@@ -1,4 +1,4 @@
 os=debian
 giturl=https://github.com/the-abra/RQM
-exec="main.sh"
+exec=main.sh
 vpath=/usr/share/RQM
