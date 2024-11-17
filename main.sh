@@ -6,7 +6,7 @@ source system.cfg
 
 cd $workpath
 
-[[ $1 == "setup" ]] && log.info "Setup for pht." && bash /usr/share/RQM/.setup/pht-setup.sh
+[[ $1 == "setup" ]] && log.info "Setup for pht." && source /usr/share/RQM/.setup/pht-setup.sh && exit 0
 
 cd core/
 cargo run
