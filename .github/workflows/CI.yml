@@ -15,4 +15,4 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run Clippy
         run: | 
-            cargo clippy --all-targets --all-features -- -Dwarnings
+            cd core/ && cargo clippy --all-targets --all-features -- -Dwarnings
