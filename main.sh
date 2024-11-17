@@ -10,4 +10,4 @@ cd $workpath
 
 cd core/
 source $HOME/.cargo/env
-cargo run
+cargo run $@
