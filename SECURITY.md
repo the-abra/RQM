@@ -12,7 +12,7 @@ The purpose of this security policy is to outline the principles, responsibiliti
 
 ## 2. Scope
 
-This policy applies to all code, documentation, and tools maintained as part of the [Project Name]. It is relevant to contributors, maintainers, users, and any third-party stakeholders.
+This policy applies to all code, documentation, and tools maintained as part of the Rust QEMU Manager. It is relevant to contributors, maintainers, users, and any third-party stakeholders.
 ## 3. Security Principles
 
   **Transparency**: Ensure openness regarding security practices and responses.<br>
