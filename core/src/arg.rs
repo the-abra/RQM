@@ -7,6 +7,6 @@ fn banner() -> String {
 #[derive(Parser, Debug)]
 #[command(version, about = banner(), long_about = banner())]
 pub struct Args {
-	#[arg(long, short, default_value = "en")]
-	pub language: String,
+	#[arg(long, short, default_value = "en")] // #[arg(long)] allows: --lang / #[arg(short)] allows -l
+	pub lang: String,
 }

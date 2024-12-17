@@ -1,3 +1,10 @@
 {
-	"hello world": "Merhaba, dünya!"
+	"hello world": "Merhaba, dünya!",
+	"Hello, Ratatui!": "Ratatui ilk adım",
+	"Welcome To RQM!": "RQM'e hoşgeldin!",
+	"Right": "Sağ",
+	"Left": "Sol",
+	"Left Block Clicked!": "Sol bloğa erişim sağlandı!",
+	"Right Block": "Sağ blok"
+	
 }
