@@ -12,7 +12,7 @@ pub fn t(key: &str) -> String {
 
 
 use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, MouseEvent, MouseEventKind},
+    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, MouseEventKind},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
@@ -68,7 +68,7 @@ fn run_app<B: ratatui::backend::Backend>(
                 .direction(Direction::Horizontal)
                 .margin(1)
                 .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
-                .split(frame.size());
+                .split(frame.area());
 
             // Left Block
             let left_block = Block::default()
@@ -90,7 +90,7 @@ fn run_app<B: ratatui::backend::Backend>(
         if let Event::Mouse(mouse_event) = event::read()? {
             if let MouseEventKind::Down(_) = mouse_event.kind {
                 let x = mouse_event.column;
-                let y = mouse_event.row;
+                //let y = mouse_event.row;
 
                 // Determine if the click is inside the left block
                 if x < terminal.size()?.width / 2 {
