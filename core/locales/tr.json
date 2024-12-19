@@ -1,10 +1,19 @@
 {
-	"hello world": "Merhaba, dünya!",
-	"Hello, Ratatui!": "Ratatui ilk adım",
+	"Main Menu": "Ana Menü",
 	"Welcome To RQM!": "RQM'e hoşgeldin!",
 	"Right": "Sağ",
 	"Left": "Sol",
-	"Left Block Clicked!": "Sol bloğa erişim sağlandı!",
-	"Right Block": "Sağ blok"
-	
+	"Running": "Çalışıyor",
+	"Stopped": "Durdu",
+	"Paused": "Beklemede",
+	"VM Management": "SM Yönetimi",
+	"Create VM": "SM Oluştur",
+	"Logs": "Kayıtlar",
+	"Network Conf": "Ağ Ayarları",
+	"Snapshots": "Anlık Görüntüler",
+	"Status": "Durum",
+	"VM Name": "SM Adı",
+	"CPU": "CPU",
+	"RAM": "RAM",
+	"VM List": "Sanal Makineler"
 }

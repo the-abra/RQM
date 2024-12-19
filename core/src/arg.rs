@@ -1,12 +1,10 @@
 use clap::Parser;
 
-fn banner() -> String {
-	r#"RQM Project."#.to_string()
-}
-
+/// Args for command line arguments
 #[derive(Parser, Debug)]
-#[command(version, about = banner(), long_about = banner())]
+#[command(name = "RQM", about = "An application for managing VMs")]
 pub struct Args {
-	#[arg(long, short, default_value = "en")] // #[arg(long)] allows: --lang / #[arg(short)] allows -l
-	pub lang: String,
+    /// Language for localization
+    #[arg(short, long, default_value = "en")]
+    pub lang: String,
 }

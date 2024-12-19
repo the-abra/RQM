@@ -1,110 +1,173 @@
-use rust_i18n::t;
-use clap::Parser;
-
+mod vm_management;
+mod create_vm;
+mod logs;
+mod network_settings;
+mod snapshot_manager;
 mod arg;
+
+use clap::Parser;
+use rust_i18n::t;
+use ratatui::{
+    widgets::{Block, Borders, Paragraph},
+    layout::{Layout, Constraint, Direction},
+    style::{Style, Color, Modifier},
+    text::{Span, Text},
+    prelude::Line,
+    Terminal,
+    backend::CrosstermBackend
+};
+use crossterm::event::{self, Event, KeyCode};
+use std::io;
 
 rust_i18n::i18n!("locales", fallback = "en");
 
+/// Localization function
 pub fn t(key: &str) -> String {
     t!(key).to_string()
-// Example call: println!("{}", t("hello world"));
 }
 
-
-use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, MouseEventKind},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
-use ratatui::{
-    backend::CrosstermBackend,
-    layout::{Constraint, Direction, Layout},
-    style::Style,
-    text::Span,
-    widgets::{Block, Borders, Paragraph},
-    Terminal,
-};
-use std::io;
-
-
-
-fn main() -> io::Result<()> {
-	let opt = arg::Args::parse(); // Handle parameters and arguments
-	rust_i18n::set_locale(&opt.lang); // Get --lang <lang> parameter here 
-
-
-	 // Setup terminal
-	 enable_raw_mode()?; // Enables raw mode for capturing input
-	 let mut stdout = io::stdout();
-	 execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
-	 let backend = CrosstermBackend::new(stdout);
-	 let mut terminal = Terminal::new(backend)?;
- 
-	 // Application logic
-	 let res = run_app(&mut terminal);
- 
-	 // Restore terminal
-	 disable_raw_mode()?;
-	 execute!(terminal.backend_mut(), LeaveAlternateScreen, DisableMouseCapture)?;
-	 terminal.show_cursor()?;
- 
-	 if let Err(err) = res {
-		 eprintln!("Error: {}", err);
-	 }
- 
-	 Ok(())
-	
+/// Define application states
+#[derive(PartialEq)]
+pub enum AppState {
+    VMManagement,
+    CreateVM,
+    Logs,
+    NetworkSettings,
+    SnapshotManager,
 }
 
-fn run_app<B: ratatui::backend::Backend>(
-    terminal: &mut Terminal<B>,
-) -> io::Result<()> {
-    let mut right_block_text = t("Right Block").to_string();
+/// Render the main menu
+fn render_main_menu(selected: usize) -> Paragraph<'static> {
+    let title = t("Main Menu");
+    let menu_items = vec![
+        t("VM Management"),
+        t("Create VM"),
+        t("Logs"),
+        t("Network Conf"),
+        t("Snapshots"),
+    ];
+
+    let menu_text: Vec<Line> = menu_items
+        .iter()
+        .enumerate()
+        .map(|(i, item)| {
+            if i == selected {
+                Line::from(vec![
+                    Span::styled(
+                        format!("> {}", item),
+                        Style::default().fg(Color::Blue).add_modifier(Modifier::BOLD),
+                    )
+                ])
+            } else {
+                Line::from(vec![Span::raw(format!("  {}", item))])
+            }
+        })
+        .collect();
+
+    let text = Text::from(menu_text);
+
+    Paragraph::new(text)
+        .block(
+            Block::default()
+                .title(Span::styled(
+                    title,
+                    Style::default().fg(Color::Rgb(255, 165, 0)), // Orange color for the border
+                ))
+                .borders(Borders::ALL)
+                .border_style(Style::default().fg(Color::Rgb(255, 165, 0))),
+        )
+}
+
+/// Render current page based on the application state
+fn render_current_page(state: &AppState) -> Paragraph<'static> {
+    let block_style = Block::default()
+        .borders(Borders::ALL)
+        .border_style(Style::default().fg(Color::Green)); // Green color for the border
+
+    match state {
+        AppState::VMManagement => vm_management::render().block(block_style),
+        AppState::CreateVM => create_vm::render().block(block_style),
+        AppState::Logs => logs::render().block(block_style),
+        AppState::NetworkSettings => network_settings::render().block(block_style),
+        AppState::SnapshotManager => snapshot_manager::render().block(block_style),
+    }
+}
+
+/// Handle user input
+fn handle_input(state: &mut AppState, selected: &mut usize, menu_length: usize) -> bool {
+    if let Event::Key(key) = event::read().unwrap() {
+        match key.code {
+            KeyCode::Up => {
+                if *selected > 0 {
+                    *selected -= 1;
+                }
+            }
+            KeyCode::Down => {
+                if *selected < menu_length - 1 {
+                    *selected += 1;
+                }
+            }
+            KeyCode::Enter => match *selected {
+                0 => *state = AppState::VMManagement,
+                1 => *state = AppState::CreateVM,
+                2 => *state = AppState::Logs,
+                3 => *state = AppState::NetworkSettings,
+                4 => *state = AppState::SnapshotManager,
+                _ => {}
+            },
+            KeyCode::Char('q') => return true,
+            KeyCode::Esc => *state = AppState::VMManagement, // Every ESC returns to VMManagement menu
+            _ => {}
+        }
+    }
+    false
+}
+
+/// Main function
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let opt = arg::Args::parse(); // Handle parameters and arguments
+    rust_i18n::set_locale(&opt.lang); // Set language for localization
+
+    // Initialize terminal
+    let backend = CrosstermBackend::new(io::stdout());
+    let mut terminal = Terminal::new(backend)?;
+
+    // Store application state
+    let mut app_state = AppState::VMManagement;
+    let mut selected_menu = 0;
+    let menu_length = 5; // Number of menu items
+
+    // Enter alternate screen and enable raw mode
+    crossterm::terminal::enable_raw_mode()?;
+    crossterm::execute!(io::stdout(), crossterm::terminal::EnterAlternateScreen)?;
 
     loop {
         terminal.draw(|frame| {
-            // Divide the screen into two horizontal chunks
+            // Define layout with two columns
             let chunks = Layout::default()
                 .direction(Direction::Horizontal)
-                .margin(1)
-                .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
+                .constraints([
+                    Constraint::Percentage(30), // Left column for menu
+                    Constraint::Percentage(70), // Right column for content
+                ])
                 .split(frame.area());
 
-            // Left Block
-            let left_block = Block::default()
-                .title(Span::styled(t("Left"), Style::default()))
-                .title_alignment(ratatui::layout::Alignment::Center)
-                .borders(Borders::ALL);
-            frame.render_widget(left_block, chunks[0]);
+            // Render main menu on the left
+            frame.render_widget(render_main_menu(selected_menu), chunks[0]);
 
-            // Right Block with dynamic text
-            let right_block = Paragraph::new(right_block_text.clone())
-                .block(Block::default()
-                .title(Span::styled(t("Right"), Style::default()))
-                .title_alignment(ratatui::layout::Alignment::Center)
-                .borders(Borders::ALL));
-            frame.render_widget(right_block, chunks[1]);
+            // Render selected page content on the right
+            frame.render_widget(render_current_page(&app_state), chunks[1]);
         })?;
 
-        // Event handling
-        if let Event::Mouse(mouse_event) = event::read()? {
-            if let MouseEventKind::Down(_) = mouse_event.kind {
-                let x = mouse_event.column;
-                //let y = mouse_event.row;
-
-                // Determine if the click is inside the left block
-                if x < terminal.size()?.width / 2 {
-                    right_block_text = t("Left Block Clicked!").to_string();
-                }
-            }
-        }
-
-        // Handle quitting on 'q' key
-        if let Event::Key(key) = event::read()? {
-            if key.code == KeyCode::Char('q') {
-                break;
-            }
+        if handle_input(&mut app_state, &mut selected_menu, menu_length) {
+            break; // Exit loop if 'q' is pressed
         }
     }
+
+    // Restore terminal state
+    crossterm::execute!(io::stdout(), crossterm::terminal::LeaveAlternateScreen)?;
+    crossterm::terminal::disable_raw_mode()?;
+    terminal.clear()?;
+
     Ok(())
 }
