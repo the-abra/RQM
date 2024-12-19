@@ -8,7 +8,3 @@ clap = { version = "4.5.21", features = ["derive"] }
 crossterm = "0.28.1"
 ratatui = { version = "0.30.0-alpha.0" }
 rust-i18n = "3.1.2"
-
-[lib]
-name = "qrmlib"
-path = "lib/lib.rs"

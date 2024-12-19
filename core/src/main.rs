@@ -39,25 +39,20 @@ pub enum AppState {
 /// Render the main menu
 fn render_main_menu(selected: usize) -> Paragraph<'static> {
     let title = t("Main Menu");
-    let menu_items = vec![
+    let menu_items = [
         t("VM Management"),
         t("Create VM"),
         t("Logs"),
-        t("Network Conf"),
+        t("Network Settings"),
         t("Snapshots"),
     ];
-
+    
     let menu_text: Vec<Line> = menu_items
         .iter()
         .enumerate()
         .map(|(i, item)| {
             if i == selected {
-                Line::from(vec![
-                    Span::styled(
-                        format!("> {}", item),
-                        Style::default().fg(Color::Blue).add_modifier(Modifier::BOLD),
-                    )
-                ])
+                Line::from(vec![Span::styled(format!("> {}", item), Style::default().fg(Color::Blue).add_modifier(Modifier::BOLD))])
             } else {
                 Line::from(vec![Span::raw(format!("  {}", item))])
             }
@@ -67,15 +62,7 @@ fn render_main_menu(selected: usize) -> Paragraph<'static> {
     let text = Text::from(menu_text);
 
     Paragraph::new(text)
-        .block(
-            Block::default()
-                .title(Span::styled(
-                    title,
-                    Style::default().fg(Color::Rgb(255, 165, 0)), // Orange color for the border
-                ))
-                .borders(Borders::ALL)
-                .border_style(Style::default().fg(Color::Rgb(255, 165, 0))),
-        )
+        .block(Block::default().title(Span::styled(title, Style::default().fg(Color::Rgb(255, 165, 0)))).borders(Borders::ALL).border_style(Style::default().fg(Color::Rgb(255, 165, 0))))
 }
 
 /// Render current page based on the application state
