@@ -1,22 +1,23 @@
-mod vm_management;
+//Hello world
+mod arg;
 mod create_vm;
 mod logs;
 mod network_settings;
 mod snapshot_manager;
-mod arg;
+mod vm_management;
 
 use clap::Parser;
-use rust_i18n::t;
-use ratatui::{
-    widgets::{Block, Borders, Paragraph},
-    layout::{Layout, Constraint, Direction},
-    style::{Style, Color, Modifier},
-    text::{Span, Text},
-    prelude::Line,
-    Terminal,
-    backend::CrosstermBackend
-};
 use crossterm::event::{self, Event, KeyCode};
+use ratatui::{
+    backend::CrosstermBackend,
+    layout::{Constraint, Direction, Layout},
+    prelude::Line,
+    style::{Color, Modifier, Style},
+    text::{Span, Text},
+    widgets::{Block, Borders, Paragraph},
+    Terminal,
+};
+use rust_i18n::t;
 use std::io;
 
 rust_i18n::i18n!("locales", fallback = "en");
@@ -46,13 +47,18 @@ fn render_main_menu(selected: usize) -> Paragraph<'static> {
         t("Network Conf"),
         t("Snapshots"),
     ];
-    
+
     let menu_text: Vec<Line> = menu_items
         .iter()
         .enumerate()
         .map(|(i, item)| {
             if i == selected {
-                Line::from(vec![Span::styled(format!("> {}", item), Style::default().fg(Color::Blue).add_modifier(Modifier::BOLD))])
+                Line::from(vec![Span::styled(
+                    format!("> {}", item),
+                    Style::default()
+                        .fg(Color::Blue)
+                        .add_modifier(Modifier::BOLD),
+                )])
             } else {
                 Line::from(vec![Span::raw(format!("  {}", item))])
             }
@@ -61,8 +67,15 @@ fn render_main_menu(selected: usize) -> Paragraph<'static> {
 
     let text = Text::from(menu_text);
 
-    Paragraph::new(text)
-        .block(Block::default().title(Span::styled(title, Style::default().fg(Color::Rgb(255, 165, 0)))).borders(Borders::ALL).border_style(Style::default().fg(Color::Rgb(255, 165, 0))))
+    Paragraph::new(text).block(
+        Block::default()
+            .title(Span::styled(
+                title,
+                Style::default().fg(Color::Rgb(255, 165, 0)),
+            ))
+            .borders(Borders::ALL)
+            .border_style(Style::default().fg(Color::Rgb(255, 165, 0))),
+    )
 }
 
 /// Render current page based on the application state
