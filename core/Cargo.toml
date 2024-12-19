@@ -10,3 +10,4 @@ ratatui = { version = "0.30.0-alpha.0" }
 rust-i18n = "3.1.2"
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
+tokio = { version = "1.0", features = ["full"] }

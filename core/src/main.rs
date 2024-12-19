@@ -43,7 +43,7 @@ fn render_main_menu(selected: usize) -> Paragraph<'static> {
         t("VM Management"),
         t("Create VM"),
         t("Logs"),
-        t("Network Settings"),
+        t("Network Conf"),
         t("Snapshots"),
     ];
     
