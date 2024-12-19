@@ -10,6 +10,8 @@ dependencies = [
  "crossterm",
  "ratatui",
  "rust-i18n",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
